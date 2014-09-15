@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
     private static final String EVZ_FORUM_URL = EVZ_MAIN_URL + "/fans/forum";
     private static final String CSS_FILE_SUFFIX = ".css";
     private static final String PATCHED_FORUM_CSS_FILE = "forum.css";
-    private static final String PAGE_NOT_AVAILABLE_ERROR = "error.html";
+    private static final String NOT_AVAILABLE_ERROR_PAGE = "error.html";
     private static final String ENCODING_UTF8 = "utf-8";
 
     private WebView mWebView;
@@ -112,7 +112,7 @@ public class MainActivity extends Activity {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 try {
                     StringWriter writer = new StringWriter();
-                    IOUtils.copy(getAssets().open(PAGE_NOT_AVAILABLE_ERROR), writer, ENCODING_UTF8);
+                    IOUtils.copy(getAssets().open(NOT_AVAILABLE_ERROR_PAGE), writer, ENCODING_UTF8);
                     view.loadData(writer.toString(), "text/html", ENCODING_UTF8);
                 } catch (IOException e) {
                     e.printStackTrace();
