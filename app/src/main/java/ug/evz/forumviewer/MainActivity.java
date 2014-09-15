@@ -33,11 +33,12 @@ public class MainActivity extends Activity {
     private static final String EVZ_FORUM_URL = EVZ_MAIN_URL + "/fans/forum";
     private static final String CSS_FILE_SUFFIX = ".css";
     private static final String PATCHED_FORUM_CSS_FILE = "forum.css";
-    private static final String WEBPAGE_NOT_AVAILABLE_ERROR = "error.html";
+    private static final String PAGE_NOT_AVAILABLE_ERROR = "error.html";
     private static final String ENCODING_UTF8 = "utf-8";
 
     private WebView mWebView;
     private ProgressBar mProgressBar;
+    private String mLastLoadedUrl = EVZ_FORUM_URL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +87,7 @@ public class MainActivity extends Activity {
                 if (url.contains(EVZ_MAIN_URL) && url.contains(CSS_FILE_SUFFIX)) {
                     Log.i(MainActivity.class.getName(), "Loading css file: " + url);
                     try {
-                        return new WebResourceResponse("text/css", "UTF-8", getAssets().open(PATCHED_FORUM_CSS_FILE));
+                        return new WebResourceResponse("text/css", ENCODING_UTF8, getAssets().open(PATCHED_FORUM_CSS_FILE));
                     } catch (IOException ignored) {
                         Log.e(MainActivity.class.getName(), "Unable to replace css file!", ignored);
                     }
@@ -102,17 +103,17 @@ public class MainActivity extends Activity {
                     startActivity(browserIntent);
                     return true;
                 }
-                
+
+                mLastLoadedUrl = url;
                 return super.shouldOverrideUrlLoading(view, url);
             }
 
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                Log.e(MainActivity.class.getName(), "An error occurred while loading url " + failingUrl);
                 try {
                     StringWriter writer = new StringWriter();
-                    IOUtils.copy(getAssets().open(WEBPAGE_NOT_AVAILABLE_ERROR), writer, ENCODING_UTF8);
-                    view.loadData(writer.toString(), "text/html", "utf-8");
+                    IOUtils.copy(getAssets().open(PAGE_NOT_AVAILABLE_ERROR), writer, ENCODING_UTF8);
+                    view.loadData(writer.toString(), "text/html", ENCODING_UTF8);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -152,12 +153,7 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                if (mWebView.getUrl().startsWith("data:text/html")) {
-                    mWebView.loadUrl(EVZ_FORUM_URL);
-                } else {
-                    mWebView.reload();
-                }
-
+                mWebView.loadUrl(mLastLoadedUrl);
                 break;
             default:
                 break;
