@@ -110,12 +110,13 @@ public class MainActivity extends Activity {
 
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                // the default android error page will still show up quickly
+                // https://code.google.com/p/android/issues/detail?id=2340
                 try {
                     StringWriter writer = new StringWriter();
                     IOUtils.copy(getAssets().open(NOT_AVAILABLE_ERROR_PAGE), writer, ENCODING_UTF8);
                     view.loadData(writer.toString(), "text/html", ENCODING_UTF8);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException ignored) {
                 }
 
             }
