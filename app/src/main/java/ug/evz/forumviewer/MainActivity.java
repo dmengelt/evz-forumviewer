@@ -1,7 +1,9 @@
 package ug.evz.forumviewer;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -91,6 +93,17 @@ public class MainActivity extends Activity {
                 }
 
                 return super.shouldInterceptRequest(view, url);
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if(!url.startsWith(EVZ_MAIN_URL)) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(browserIntent);
+                    return true;
+                }
+                
+                return super.shouldOverrideUrlLoading(view, url);
             }
 
             @Override
