@@ -136,9 +136,6 @@ public class MainActivity extends Activity {
             public void onGlobalLayout() {
                 View contentView = decorView.findViewById(android.R.id.content);
                 mProgressBar.setY(contentView.getY() - 10);
-
-                ViewTreeObserver observer = mProgressBar.getViewTreeObserver();
-                observer.removeGlobalOnLayoutListener(this);
             }
         });
     }
