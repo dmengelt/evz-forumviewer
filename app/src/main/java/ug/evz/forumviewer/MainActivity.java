@@ -31,10 +31,10 @@ public class MainActivity extends Activity {
 
     private static final String EVZ_MAIN_URL = "http://www.evz.ch";
     private static final String EVZ_FORUM_URL = EVZ_MAIN_URL + "/fans/forum";
-    private static final String CSS_FILE_SUFFIX = ".css";
     private static final String PATCHED_FORUM_CSS_FILE = "forum.css";
     private static final String NOT_AVAILABLE_ERROR_PAGE = "error.html";
     private static final String ENCODING_UTF8 = "utf-8";
+    private static final String CSS_MATCH_REGEX_PATTERN = ".*merged-.*\\.css.*";
 
     private WebView mWebView;
     private ProgressBar mProgressBar;
@@ -84,8 +84,8 @@ public class MainActivity extends Activity {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
 
-                if (url.contains(EVZ_MAIN_URL) && url.contains(CSS_FILE_SUFFIX)) {
-                    Log.i(MainActivity.class.getName(), "Loading css file: " + url);
+                if (url.contains(EVZ_MAIN_URL) && url.matches(CSS_MATCH_REGEX_PATTERN)) {
+                    Log.i(MainActivity.class.getName(), "Replacing CSS file: " + url);
                     try {
                         return new WebResourceResponse("text/css", ENCODING_UTF8, getAssets().open(PATCHED_FORUM_CSS_FILE));
                     } catch (IOException ignored) {
@@ -98,7 +98,7 @@ public class MainActivity extends Activity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if(!url.startsWith(EVZ_MAIN_URL)) {
+                if (!url.startsWith(EVZ_MAIN_URL)) {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     startActivity(browserIntent);
                     return true;
